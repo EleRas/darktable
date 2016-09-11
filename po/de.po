@@ -8697,6 +8697,18 @@ msgctxt "accel"
 msgid "rotate selected images 90 degrees CW"
 msgstr "Ausgewählte Bilder um 90° im Uhrzeigersinn drehen"
 
+#: ../src/libs/image.c:223
+msgid "timelapse"
+msgstr "Zeitraffer"
+
+#: ../src/libs/image.c:223
+msgid "create timelapse"
+msgstr "Zeitraffer erstellen"
+
+#: ../src/libs/image.c:226
+msgid "group selected images as timelapse"
+msgstr "ausgewählte Bilder als Zeitraffer Zussammenfassen"
+
 #: ../src/libs/image.c:296
 msgctxt "accel"
 msgid "rotate selected images 90 degrees CCW"

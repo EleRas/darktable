@@ -146,7 +146,8 @@ static gboolean _migrate_schema(dt_database_t *db, int version)
       "raw_auto_bright_threshold REAL, raw_black INTEGER, raw_maximum INTEGER, "
       "caption VARCHAR, description VARCHAR, license VARCHAR, sha1sum CHAR(40), "
       "orientation INTEGER, histogram BLOB, lightmap BLOB, longitude REAL, "
-      "latitude REAL, color_matrix BLOB, colorspace INTEGER, version INTEGER, max_version INTEGER)",
+      "latitude REAL, color_matrix BLOB, colorspace INTEGER, version INTEGER, max_version INTEGER,"
+      "average_brightness REAL, timelapse_keyframe INTEGER, exposure_correction REAL)",
       NULL, NULL, NULL);
   _SQLITE3_EXEC(db->handle, "CREATE INDEX images_group_id_index ON images (group_id)", NULL, NULL, NULL);
   _SQLITE3_EXEC(db->handle, "CREATE INDEX images_film_id_index ON images (film_id)", NULL, NULL, NULL);
@@ -730,6 +731,49 @@ static int _upgrade_schema_step(dt_database_t *db, int version)
       sqlite3_exec(db->handle, "ROLLBACK TRANSACTION", NULL, NULL, NULL);
       return version;
     }
+    // add some timelapse stuff
+    if(sqlite3_exec(db->handle, "ALTER TABLE images ADD COLUMN average_brightness REAL", NULL, NULL, NULL) != SQLITE_OK)
+    {
+      fprintf(stderr, "[init] can't add `average_brightness' column to database\n");
+      fprintf(stderr, "[init]   %s\n", sqlite3_errmsg(db->handle));
+      sqlite3_exec(db->handle, "ROLLBACK TRANSACTION", NULL, NULL, NULL);
+      return version;
+    }
+    if(sqlite3_exec(db->handle, "UPDATE images SET average_brightness = -1", NULL, NULL, NULL) != SQLITE_OK)
+    {
+      fprintf(stderr, "[init] can't initialize `average_brightness' with NULL\n");
+      fprintf(stderr, "[init]   %s\n", sqlite3_errmsg(db->handle));
+      sqlite3_exec(db->handle, "ROLLBACK TRANSACTION", NULL, NULL, NULL);
+      return version;
+    }
+    if(sqlite3_exec(db->handle, "ALTER TABLE images ADD COLUMN timelapse_keyframe INTEGER", NULL, NULL, NULL) != SQLITE_OK)
+    {
+      fprintf(stderr, "[init] can't add `timelapse_keyframe' column to database\n");
+      fprintf(stderr, "[init]   %s\n", sqlite3_errmsg(db->handle));
+      sqlite3_exec(db->handle, "ROLLBACK TRANSACTION", NULL, NULL, NULL);
+      return version;
+    }
+    if(sqlite3_exec(db->handle, "UPDATE images SET timelapse_keyframe = 0", NULL, NULL, NULL) != SQLITE_OK)
+    {
+      fprintf(stderr, "[init] can't initialize `timelapse_keyframe' with 0\n");
+      fprintf(stderr, "[init]   %s\n", sqlite3_errmsg(db->handle));
+      sqlite3_exec(db->handle, "ROLLBACK TRANSACTION", NULL, NULL, NULL);
+      return version;
+    }
+    if(sqlite3_exec(db->handle, "ALTER TABLE images ADD COLUMN exposure_correction REAL", NULL, NULL, NULL) != SQLITE_OK)
+    {
+      fprintf(stderr, "[init] can't add `exposure_correction' column to database\n");
+      fprintf(stderr, "[init]   %s\n", sqlite3_errmsg(db->handle));
+      sqlite3_exec(db->handle, "ROLLBACK TRANSACTION", NULL, NULL, NULL);
+      return version;
+    }
+    if(sqlite3_exec(db->handle, "UPDATE images SET exposure_correction = 0", NULL, NULL, NULL) != SQLITE_OK)
+    {
+      fprintf(stderr, "[init] can't initialize `exposure_correction' with 0\n");
+      fprintf(stderr, "[init]   %s\n", sqlite3_errmsg(db->handle));
+      sqlite3_exec(db->handle, "ROLLBACK TRANSACTION", NULL, NULL, NULL);
+      return version;
+    }
     sqlite3_exec(db->handle, "COMMIT", NULL, NULL, NULL);
     new_version = 11;
   } // maybe in the future, see commented out code elsewhere
@@ -802,7 +846,8 @@ static void _create_schema(dt_database_t *db)
       "caption VARCHAR, description VARCHAR, license VARCHAR, sha1sum CHAR(40), "
       "orientation INTEGER, histogram BLOB, lightmap BLOB, longitude REAL, "
       "latitude REAL, altitude REAL, color_matrix BLOB, colorspace INTEGER, version INTEGER, "
-      "max_version INTEGER, write_timestamp INTEGER, history_end INTEGER)",
+      "max_version INTEGER, write_timestamp INTEGER, history_end INTEGER,"
+      "average_brightness REAL, timelapse_keyframe INTEGER, exposure_correction REAL)",
       NULL, NULL, NULL);
   DT_DEBUG_SQLITE3_EXEC(db->handle, "CREATE INDEX images_group_id_index ON images (group_id)", NULL, NULL,
                         NULL);

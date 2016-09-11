@@ -321,7 +321,7 @@ static float lr2dt_clarity(float value)
   return get_interpolate(lr2dt_clarity_table, value);
 }
 
-static void dt_add_hist(int imgid, char *operation, dt_iop_params_t *params, int params_size, char *imported,
+void dt_add_hist(int imgid, char *operation, dt_iop_params_t *params, int params_size, char *imported,
                         size_t imported_len, int version, int *import_count)
 {
   int32_t num = 0;

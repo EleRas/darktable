@@ -76,12 +76,13 @@ void dt_view_manager_init(dt_view_manager_t *vm)
                       "print",
 #endif
                       "knight",
+                      "timelapse",
                       NULL };
   char *module = modules[midx];
   while(module != NULL)
   {
     if((res = dt_view_manager_load_module(vm, module)) < 0)
-      fprintf(stderr, "[view_manager_init] failed to load view module '%s'\n", module);
+      fprintf(stderr, "[view_manager_init] failed to load view module '%s' %i\n", module, dt_view_manager_load_module(vm, module));
     else
     {
       // Module loaded lets handle specific cases
@@ -115,7 +116,7 @@ const dt_view_t *dt_view_manager_get_current_view(dt_view_manager_t *vm)
 int dt_view_manager_load_module(dt_view_manager_t *vm, const char *mod)
 {
   if(vm->num_views >= DT_VIEW_MAX_MODULES) return -1;
-  if(dt_view_load_module(vm->view + vm->num_views, mod)) return -1;
+  if(dt_view_load_module(vm->view + vm->num_views, mod)) return dt_view_load_module(vm->view + vm->num_views, mod);
   return vm->num_views++;
 }
 
@@ -145,15 +146,20 @@ int dt_view_load_module(dt_view_t *view, const char *module)
   if(!view->module)
   {
     fprintf(stderr, "[view_load_module] could not open %s (%s)!\n", libname, g_module_error());
-    retval = -1;
+    retval = -20;
     goto out;
   }
   int (*version)();
-  if(!g_module_symbol(view->module, "dt_module_dt_version", (gpointer) & (version))) goto out;
+  if(!g_module_symbol(view->module, "dt_module_dt_version", (gpointer) & (version))) 
+  {
+    retval = -30;
+    goto out;
+  }
   if(version() != dt_version())
   {
     fprintf(stderr, "[view_load_module] `%s' is compiled for another version of dt (module %d != dt %d) !\n",
             libname, version(), dt_version());
+    retval = -40;
     goto out;
   }
   if(!g_module_symbol(view->module, "name", (gpointer) & (view->name))) view->name = NULL;
