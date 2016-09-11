@@ -154,6 +154,13 @@ typedef enum dt_signal_t
     no return
    * */
   DT_SIGNAL_CAMERA_DETECTED,
+ 
+  /** \brief This signal is raised when clicking the read frames button in timelapse module
+    no return
+   * */
+  DT_SIGNAL_TIMELAPSE_RESET,
+  DT_SIGNAL_TIMELAPSE_INITIALIZE,
+  DT_SIGNAL_TIMELAPSE_EQUALIZE,
 
   /* do not touch !*/
   DT_SIGNAL_COUNT

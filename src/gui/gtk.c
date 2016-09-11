@@ -150,7 +150,15 @@ static void key_accel_changed(GtkAccelMap *object, gchar *accel_path, guint acce
   // darkroom
   dt_accel_path_view(path, sizeof(path), "darkroom", "full preview");
   gtk_accel_map_lookup_entry(path, &darktable.control->accels.darkroom_preview);
-
+  // Timelapse
+  dt_accel_path_view(path, sizeof(path), "timelapse", "scroll up");
+  gtk_accel_map_lookup_entry(path, &darktable.control->accels.timelapse_up);
+  dt_accel_path_view(path, sizeof(path), "timelapse", "scroll down");
+  gtk_accel_map_lookup_entry(path, &darktable.control->accels.timelapse_down);
+  dt_accel_path_view(path, sizeof(path), "timelapse", "scroll left");
+  gtk_accel_map_lookup_entry(path, &darktable.control->accels.timelapse_left);
+  dt_accel_path_view(path, sizeof(path), "timelapse", "scroll right");
+  gtk_accel_map_lookup_entry(path, &darktable.control->accels.timelapse_right);
 
   // Global
   dt_accel_path_global(path, sizeof(path), "toggle side borders");

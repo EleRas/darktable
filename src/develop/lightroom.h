@@ -30,6 +30,9 @@ void dt_lightroom_import(int imgid, dt_develop_t *dev, gboolean iauto);
 /* returns NULL if not found, or g_strdup'ed pathname, the caller should g_free it. */
 char *dt_get_lightroom_xmp(int imgid);
 
+void dt_add_hist(int imgid, char *operation, dt_iop_params_t *params, int params_size, char *imported,
+                        size_t imported_len, int version, int *import_count);
+
 #endif
 
 // modelines: These editor modelines have been set for all relevant files by tools/update_modelines.sh

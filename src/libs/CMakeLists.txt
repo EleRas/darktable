@@ -7,7 +7,7 @@ add_definitions(-include common/module_api.h)
 add_definitions(-include libs/lib_api.h)
 
 # The modules
-set(MODULES import export copy_history styles tagging image select collect recentcollect metadata metadata_view navigation histogram history snapshots modulelist modulegroups backgroundjobs colorpicker masks session)
+set(MODULES import export copy_history timelapse_export styles tagging image select collect recentcollect metadata metadata_view navigation histogram history snapshots modulelist modulegroups backgroundjobs colorpicker masks session)
 
 # The tools
 set(MODULES ${MODULES} viewswitcher)
@@ -26,6 +26,7 @@ set(MODULES ${MODULES} global_toolbox)
 add_library(import MODULE "import.c")
 add_library(export MODULE "export.c")
 add_library(copy_history MODULE "copy_history.c")
+add_library(timelapse_export MODULE "timelapse_export.c")
 add_library(styles MODULE "styles.c")
 add_library(image MODULE "image.c")
 add_library(tagging MODULE "tagging.c")
